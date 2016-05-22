@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>ru.rtc</groupId>
+    <artifactId>garc</artifactId>
+    <version>0.00001-SNAPSHOT</version>
+    <properties>
+        <jme3.version>3.0.10</jme3.version>
+    </properties>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>org.cogchar</groupId>
+            <artifactId>ext.bundle.opengl.jmonkey</artifactId>
+            <version>1.0.3</version>
+        </dependency>
+
+    </dependencies>
+    <repositories>
+        <repository>
+            <id>jme3-repo</id>
+            <name>JME3 maven repo</name>
+            <url>http://updates.jmonkeyengine.org/maven/</url>
+        </repository>
+    </repositories>
+
+
+</project>
