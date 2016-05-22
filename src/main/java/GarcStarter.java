@@ -25,6 +25,7 @@ import robot.Robot;
  */
 public class GarcStarter extends SimpleApplication {
     private static final Logger logger = LoggerFactory.getLogger(GarcStarter.class);
+
     public static void main(String args[]) {
 
         GarcStarter app = new GarcStarter();
@@ -99,6 +100,7 @@ public class GarcStarter extends SimpleApplication {
         initFloor();
         initCrossHairs();
     }
+
     protected void initMark() {
         Sphere sphere = new Sphere(30, 30, 0.2f);
         mark = new Geometry("BOOM!", sphere);
@@ -148,19 +150,13 @@ public class GarcStarter extends SimpleApplication {
 
     };
 
-    /**
-     * Initialize the materials used in this scene.
-     */
+
     /**
      * Initialize the materials used in this scene.
      */
     public void initMaterials() {
         wall_mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         wall_mat.setColor("Color", ColorRGBA.Blue);
-       /* TextureKey key = new TextureKey("Textures/Terrain/BrickWall/BrickWall.jpg");
-        key.setGenerateMips(true);
-        Texture tex = assetManager.loadTexture(key);
-        wall_mat.setTexture("ColorMap", tex);*/
 
         stone_mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         stone_mat.setColor("Color", ColorRGBA.Brown);
@@ -203,8 +199,7 @@ public class GarcStarter extends SimpleApplication {
 
     private void initRobot() {
         robot = new Robot(2f);
-        Material mat = new Material(assetManager,
-                "Common/MatDefs/Misc/Unshaded.j3md");
+        Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         mat.setColor("Color", ColorRGBA.Red);
         robot.initialise(mat);
         rootNode.attachChild(robot.getGeometry());
