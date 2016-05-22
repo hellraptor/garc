@@ -9,6 +9,7 @@
     <version>0.00001-SNAPSHOT</version>
     <properties>
         <jme3.version>3.0.10</jme3.version>
+        <slf4j.version>1.7.7</slf4j.version>
     </properties>
 
     <dependencies>
@@ -17,6 +18,13 @@
             <groupId>org.cogchar</groupId>
             <artifactId>ext.bundle.opengl.jmonkey</artifactId>
             <version>1.0.3</version>
+        </dependency>
+
+        <!-- Logging dependencies -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
         </dependency>
 
     </dependencies>

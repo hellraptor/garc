@@ -19,6 +19,7 @@ $RECYCLE.BIN/
 *.idea
 
 #generated files
+/target
 *OpenAL64.dll
 *lwjgl64.dll
 

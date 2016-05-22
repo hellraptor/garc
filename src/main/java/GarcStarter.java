@@ -16,14 +16,16 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Sphere;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import robot.Robot;
 
 /**
  * Created by svyatoslav_yakovlev on 5/12/2016.
  */
 public class GarcStarter extends SimpleApplication {
-
-    public static void main(String asrgs[]) {
+    private static final Logger logger = LoggerFactory.getLogger(GarcStarter.class);
+    public static void main(String args[]) {
 
         GarcStarter app = new GarcStarter();
         app.start();
@@ -91,10 +93,18 @@ public class GarcStarter extends SimpleApplication {
         inputManager.addListener(actionListener, "mark");
         /** Initialize the scene, materials, and physics space */
         initMaterials();
+        initMark();
         //initWall();
         initRobot();
         initFloor();
         initCrossHairs();
+    }
+    protected void initMark() {
+        Sphere sphere = new Sphere(30, 30, 0.2f);
+        mark = new Geometry("BOOM!", sphere);
+        Material mark_mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        mark_mat.setColor("Color", ColorRGBA.Red);
+        mark.setMaterial(mark_mat);
     }
 
     /**
@@ -112,14 +122,14 @@ public class GarcStarter extends SimpleApplication {
                 // 3. Collect intersections between Ray and Shootables in results list.
                 markeble.collideWith(ray, results);
                 // 4. Print the results
-                System.out.println("----- Collisions? " + results.size() + "-----");
+                logger.debug("----- Collisions? " + results.size() + "-----");
                 for (int i = 0; i < results.size(); i++) {
                     // For each hit, we know distance, impact point, name of geometry.
                     float dist = results.getCollision(i).getDistance();
                     Vector3f pt = results.getCollision(i).getContactPoint();
                     String hit = results.getCollision(i).getGeometry().getName();
-                    System.out.println("* Collision #" + i);
-                    System.out.println("  You shot " + hit + " at " + pt + ", " + dist + " wu away.");
+                    logger.debug("* Collision #" + i);
+                    logger.debug("  You shot " + hit + " at " + pt + ", " + dist + " wu away.");
                 }
                 // 5. Use the results (we mark the hit object)
                 if (results.size() > 0) {
