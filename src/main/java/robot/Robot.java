@@ -10,17 +10,20 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Cylinder;
 import sensors.Lidar;
-import sensors.Sensor;
 
 /**
  * Created by svyatoslav_yakovlev on 5/22/2016.
  */
-public class Robot implements Manageble{
+public class Robot implements Manageble {
 
-    private Sensor lidar;
+    private Lidar lidar;
 
     private VehicleControl vehicle;
     private Node vehicleNode;
+
+    public Lidar getLidar() {
+        return lidar;
+    }
 
     public VehicleControl getVehicle() {
         return vehicle;
@@ -30,8 +33,9 @@ public class Robot implements Manageble{
         return vehicleNode;
     }
 
-    public Robot(Material mat){
+    public Robot(Material mat) {
         initialise(mat);
+        initialiseLidar(mat);
     }
 
 
@@ -41,7 +45,7 @@ public class Robot implements Manageble{
         //this shifts the effective center of mass of the BoxCollisionShape to 0,-1,0
         CompoundCollisionShape compoundShape = new CompoundCollisionShape();
         BoxCollisionShape box = new BoxCollisionShape(new Vector3f(1.2f, 0.5f, 2.4f));
-        compoundShape.addChildShape(box, new Vector3f(0, 1, 0));
+        compoundShape.addChildShape(box, new Vector3f(0, 1.1f, 0));
 
         //create vehicle node
 
@@ -70,11 +74,14 @@ public class Robot implements Manageble{
 
         addWheals(mat, wheelDirection, wheelAxle, radius, restLength, yOff, xOff, zOff);
 
-        initialiseLidar();
+
     }
 
-    private void initialiseLidar() {
-        lidar = new Lidar();
+    private void initialiseLidar(Material mat) {
+        lidar = new Lidar(270, mat);
+        lidar.getLidarGeometry().move(0, 1.2f, 2.45f);
+        vehicleNode.attachChild(lidar.getLidarGeometry());
+        lidar.start();
     }
 
     private void addWheals(Material mat, Vector3f wheelDirection, Vector3f wheelAxle, float radius,
@@ -86,7 +93,7 @@ public class Robot implements Manageble{
         node2.attachChild(wheels2);
         wheels2.rotate(0, FastMath.HALF_PI, 0);
         wheels2.setMaterial(mat);
-        vehicle.addWheel(node2, new Vector3f(xOff/2-restLength*1.5f, yOff, zOff),
+        vehicle.addWheel(node2, new Vector3f(xOff / 2 - restLength * 1.5f, yOff, zOff),
                 wheelDirection, wheelAxle, restLength, radius, true);
 
         Node node3 = new Node("wheel 2 node");

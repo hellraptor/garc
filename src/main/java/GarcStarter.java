@@ -38,7 +38,7 @@ public class GarcStarter extends SimpleApplication implements ActionListener {
         bulletAppState.setDebugEnabled(true);
         PhysicsTestHelper.createPhysicsTestWorld(rootNode, assetManager, bulletAppState.getPhysicsSpace());
         setupKeys();
-        buildPlayer();
+        buildRobot();
     }
 
     private PhysicsSpace getPhysicsSpace() {
@@ -60,16 +60,17 @@ public class GarcStarter extends SimpleApplication implements ActionListener {
         inputManager.addListener(this, "Reset");
     }
 
-    public void buildPlayer() {
+    public void buildRobot() {
         Material mat = new Material(getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
         mat.getAdditionalRenderState().setWireframe(true);
         mat.setColor("Color", ColorRGBA.Red);
         robot = new Robot(mat);
         attachRobotToScene(robot);
-        attachRobotPhisicBodyToPhisicWorld(robot);
+        attachRobotPhysicBodyToPhysicWorld(robot);
+        robot.getLidar().setCollidables(rootNode);//todo remove this setter and move addition of colidables to the robot builder
     }
 
-    private void attachRobotPhisicBodyToPhisicWorld(Robot robot) {
+    private void attachRobotPhysicBodyToPhysicWorld(Robot robot) {
         getPhysicsSpace().add(robot.getVehicle());
     }
 

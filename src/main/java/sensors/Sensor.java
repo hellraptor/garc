@@ -5,5 +5,5 @@ package sensors;
  */
 public interface Sensor <E>{
     E makeMeasure();
-
+    E getLastMeasure();
 }
