@@ -18,6 +18,7 @@ $RECYCLE.BIN/
 *.iml
 *.idea
 
+/bulletjme64.dll
 #generated files
 /target
 *OpenAL64.dll

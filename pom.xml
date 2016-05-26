@@ -14,11 +14,7 @@
 
     <dependencies>
 
-        <dependency>
-            <groupId>org.cogchar</groupId>
-            <artifactId>ext.bundle.opengl.jmonkey</artifactId>
-            <version>1.0.3</version>
-        </dependency>
+
 
         <!-- Logging dependencies -->
         <dependency>
