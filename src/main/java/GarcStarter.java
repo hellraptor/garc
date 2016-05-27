@@ -67,7 +67,7 @@ public class GarcStarter extends SimpleApplication implements ActionListener {
         robot = new Robot(mat);
         attachRobotToScene(robot);
         attachRobotPhysicBodyToPhysicWorld(robot);
-        robot.getLidar().setCollidables(rootNode);//todo remove this setter and move addition of colidables to the robot builder
+        robot.getLidar().setCollidables(rootNode);// TODO: 5/26/2016 remove this setter and move addition of colidables to the robot builder
     }
 
     private void attachRobotPhysicBodyToPhysicWorld(Robot robot) {
@@ -126,6 +126,12 @@ public class GarcStarter extends SimpleApplication implements ActionListener {
             } else {
             }
         }
+    }
+
+    @Override
+    public void stop() {
+        robot.getLidar().setOn(false);//// TODO: 5/27/2016
+        super.stop();
     }
 
 }

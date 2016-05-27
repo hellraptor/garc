@@ -18,33 +18,47 @@
 
 
     <build>
-    <finalName>${name}</finalName>
+        <finalName>${name}</finalName>
 
-    <plugins>
-    <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>${maven-checkstyle-plugin.version}</version>
-        <configuration>
-            <configLocation>${webapp.resources}/garc-checkstyle.xml</configLocation>
-            <suppressionsLocation>${webapp.resources}/garc-checkstyle-suppressions.xml</suppressionsLocation>
-            <violationSeverity>warning</violationSeverity>
-            <failOnViolation>false</failOnViolation>
-        </configuration>
-        <executions>
-            <execution>
-                <id>checkstyle</id>
-                <phase>validate</phase>
-                <goals>
-                    <goal>check</goal>
-                </goals>
-            </execution>
-        </executions>
-    </plugin>
-    </plugins>
+        <plugins>
+            <plugin>
+                <!-- Build an executable JAR -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>ru.rtc.garc.GarcStarter</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>${maven-checkstyle-plugin.version}</version>
+                <configuration>
+                    <configLocation>${webapp.resources}/garc-checkstyle.xml</configLocation>
+                    <suppressionsLocation>${webapp.resources}/garc-checkstyle-suppressions.xml</suppressionsLocation>
+                    <violationSeverity>warning</violationSeverity>
+                    <failOnViolation>false</failOnViolation>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>checkstyle</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
     <dependencies>
-
 
 
         <!-- Logging dependencies -->
