@@ -15,6 +15,7 @@ import com.jme3.scene.shape.Box;
  */
 public class Lidar extends Thread implements Sensor<CollisionResults> {
 
+    private final Material mat;
     CollisionResults lastMeasure;
 
     Geometry lidarGeometry;
@@ -22,6 +23,9 @@ public class Lidar extends Thread implements Sensor<CollisionResults> {
     Node collidables;
 
     boolean isOn;
+    private Geometry gray;
+    public Vector3f add;//// TODO: 5/28/2016 refactor public fields
+    public Vector3f add1;
 
     public boolean isOn() {
         return isOn;
@@ -61,35 +65,45 @@ public class Lidar extends Thread implements Sensor<CollisionResults> {
         Box b = new Box(0.1f, 0.1f, 0.1f);
         lidarGeometry = new Geometry("Lidar", b);
         mat.setColor("Color", ColorRGBA.Blue);
-        lidarGeometry.setMaterial(mat);
+        this.mat = mat;
+        lidarGeometry.setMaterial(this.mat);
 
     }
 
 
     public CollisionResults makeMeasure() {
-        lastMeasure = null;
+        lastMeasure = new CollisionResults();
+        gray = null;
 
         // 1. Reset results list.
         CollisionResults results = new CollisionResults();
         // 2. Aim the ray from cam loc to cam direction.
-        Ray ray = new Ray(lidarGeometry.getWorldTranslation().add(0.2f,0.2f,0.2f), Vector3f.UNIT_X.mult(150f));
+
+        Vector3f worldTranslation = lidarGeometry.getWorldTranslation();
+
+        add = worldTranslation.add(0f, 0f, 0.2f);
+        add1 = worldTranslation.add(getLidarGeometry().getWorldRotation().mult(new Vector3f(15f, 0, 0)));
+        Ray ray = new Ray(add, add1);
+
+        System.out.println("* lidarGeometry.getWorldTranslation" + lidarGeometry.getWorldTranslation());
+
         // 3. Collect intersections between Ray and Shootables in results list.
 // TODO: 5/27/2016  correct raycasting
 
-         collidables.collideWith(ray, results);
-        // 4. Print results.
-        System.out.println("----- Collisions? " + results.size() + "-----");
-        for (int i = 0; i < results.size(); i++) {
-            // For each hit, we know distance, impact point, name of geometry.
-            float dist = results.getCollision(i).getDistance();
-            Vector3f pt = results.getCollision(i).getContactPoint();
-            String hit = results.getCollision(i).getGeometry().getName();
-            System.out.println("* Collision #" + i);
-            System.out.println("  You shot " + hit + " at " + pt + ", " + dist + " wu away.");
-        }
+        collidables.collideWith(ray, results);
 
         CollisionResult closest = results.getClosestCollision();
-
+        // 4. Print results.
+        if (closest == null) return lastMeasure;
+        // For each hit, we know distance, impact point, name of geometry.
+        float dist = closest.getDistance();
+        if (dist > 15) {
+            return lastMeasure;
+        }
+        lastMeasure.addCollision(closest);
+        Vector3f pt = closest.getContactPoint();
+        String hit = closest.getGeometry().getName();
+        System.out.println("  You shot " + hit + " at " + pt + ", " + dist + " wu away.");
         return lastMeasure;
     }
 

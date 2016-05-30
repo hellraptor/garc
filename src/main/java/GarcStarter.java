@@ -1,6 +1,7 @@
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.PhysicsSpace;
+import com.jme3.collision.CollisionResult;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
@@ -8,6 +9,8 @@ import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Matrix3f;
 import com.jme3.math.Vector3f;
+import com.jme3.scene.Geometry;
+import com.jme3.scene.shape.Line;
 import jme3test.bullet.PhysicsTestHelper;
 import robot.Robot;
 
@@ -68,6 +71,7 @@ public class GarcStarter extends SimpleApplication implements ActionListener {
         attachRobotToScene(robot);
         attachRobotPhysicBodyToPhysicWorld(robot);
         robot.getLidar().setCollidables(rootNode);// TODO: 5/26/2016 remove this setter and move addition of colidables to the robot builder
+
     }
 
     private void attachRobotPhysicBodyToPhysicWorld(Robot robot) {
@@ -81,6 +85,21 @@ public class GarcStarter extends SimpleApplication implements ActionListener {
     @Override
     public void simpleUpdate(float tpf) {
         cam.lookAt(robot.getVehicle().getPhysicsLocation(), Vector3f.UNIT_Y);
+        drawRayLines();
+    }
+
+    private void drawRayLines() {
+        rootNode.detachChildNamed("rayLine");
+        for (CollisionResult cl : robot.getLidar().getLastMeasure()) {
+            //  if (robot.getLidar().getLastMeasure().size() <= 0) return;
+            Line line = new Line(robot.getLidar().add,robot.getLidar().add1);
+            Geometry gline = new Geometry("rayLine", line);
+            Material mat1 = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+            mat1.setColor("Color", ColorRGBA.Green);
+            gline.setMaterial(mat1);
+            rootNode.attachChild(gline);
+        }
+
     }
 
     public void onAction(String binding, boolean value, float tpf) {
