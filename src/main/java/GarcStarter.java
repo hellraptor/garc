@@ -10,6 +10,7 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Matrix3f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
+import com.jme3.scene.Node;
 import com.jme3.scene.shape.Line;
 import jme3test.bullet.PhysicsTestHelper;
 import robot.Robot;
@@ -28,6 +29,7 @@ public class GarcStarter extends SimpleApplication implements ActionListener {
     private float accelerationValue = 0;
     private Vector3f jumpForce = new Vector3f(0, 3000, 0);
     private Robot robot;
+    Node collidables;
 
     public static void main(String[] args) {
         GarcStarter app = new GarcStarter();
@@ -39,9 +41,12 @@ public class GarcStarter extends SimpleApplication implements ActionListener {
         bulletAppState = new BulletAppState();
         stateManager.attach(bulletAppState);
         bulletAppState.setDebugEnabled(true);
-        PhysicsTestHelper.createPhysicsTestWorld(rootNode, assetManager, bulletAppState.getPhysicsSpace());
+        collidables = new Node("Collidables");
+        PhysicsTestHelper.createPhysicsTestWorld(collidables, assetManager, bulletAppState.getPhysicsSpace());
         setupKeys();
         buildRobot();
+        rootNode.attachChild(new Node("Rays"));
+        rootNode.attachChild(collidables);
     }
 
     private PhysicsSpace getPhysicsSpace() {
@@ -70,7 +75,7 @@ public class GarcStarter extends SimpleApplication implements ActionListener {
         robot = new Robot(mat);
         attachRobotToScene(robot);
         attachRobotPhysicBodyToPhysicWorld(robot);
-        robot.getLidar().setCollidables(rootNode);// TODO: 5/26/2016 remove this setter and move addition of colidables to the robot builder
+        robot.getLidar().setCollidables(collidables);// TODO: 5/26/2016 remove this setter and move addition of colidables to the robot builder
 
     }
 
@@ -88,17 +93,20 @@ public class GarcStarter extends SimpleApplication implements ActionListener {
         drawRayLines();
     }
 
-    private void drawRayLines() {
-        rootNode.detachChildNamed("rayLine");
+    private synchronized void drawRayLines() {
+        rootNode.detachChildNamed("Rays");
+
+        Node rays = new Node("Rays");
         for (CollisionResult cl : robot.getLidar().getLastMeasure()) {
             //  if (robot.getLidar().getLastMeasure().size() <= 0) return;
-            Line line = new Line(robot.getLidar().add,robot.getLidar().add1);
+            Line line = new Line(robot.getLidar().getLidarGeometry().getWorldTranslation(), cl.getContactPoint());
             Geometry gline = new Geometry("rayLine", line);
             Material mat1 = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
             mat1.setColor("Color", ColorRGBA.Green);
             gline.setMaterial(mat1);
-            rootNode.attachChild(gline);
+            rays.attachChild(gline);
         }
+        rootNode.attachChild(rays);
 
     }
 
