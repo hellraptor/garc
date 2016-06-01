@@ -78,7 +78,7 @@ public class Robot implements Manageble {
     }
 
     private void initialiseLidar(Material mat) {
-        lidar = new Lidar(270, mat);
+        lidar = new Lidar(175, mat);
         lidar.getLidarGeometry().move(0, 1.2f, 2.45f);
         vehicleNode.attachChild(lidar.getLidarGeometry());
         lidar.setOn(true);

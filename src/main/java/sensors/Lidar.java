@@ -78,21 +78,24 @@ public class Lidar extends Thread implements Sensor<CopyOnWriteArrayList<Collisi
         CollisionResults results = new CollisionResults();
         Vector3f worldTranslation = lidarGeometry.getWorldTranslation();
         CopyOnWriteArrayList<CollisionResult> lastMeasure = new CopyOnWriteArrayList<>();
-        float angle = (360f - scaningRadious) / 2;
-        float finishAngle = scaningRadious - angle;
-        while (angle < finishAngle) {
+        float angle = 2.5f;
+        while (angle < scaningRadious) {
             Ray ray = new Ray(worldTranslation.add(0f, 0f, 0f),
-                    worldTranslation.add(getLidarGeometry().getWorldRotation()
+                    getLidarGeometry().getWorldRotation()
                             .mult(new Vector3f(-distanceOfMesures * (float) Math.cos(Math.toRadians(angle)), 0,
-                                    distanceOfMesures * (float) Math.sin(Math.toRadians(angle))))));
+                                    distanceOfMesures * (float) Math.sin(Math.toRadians(angle)))).mult(new Vector3f(1, 0, 1)));
             collidables.collideWith(ray, results);
 
             CollisionResult result = getDetection(results);
             if (result != null) {
                 lastMeasure.add(result);
-                Vector3f pt = result.getContactPoint();
-                String hit = result.getGeometry().getName();
-                System.out.println("  You shot " + hit + " at " + pt + ", " + result.getDistance() + " wu away. angle: "+angle);
+
+               System.out.println("Ray origin: " + worldTranslation);
+                System.out.println("You shot " + result.getGeometry().getName()
+                        + " at " + result.getContactPoint() + ", "
+                        + result.getDistance() + " wu away. angle: " +angle);
+
+
             }
             angle += angleIncrement;
         }
