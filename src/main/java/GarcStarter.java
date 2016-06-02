@@ -91,6 +91,7 @@ public class GarcStarter extends SimpleApplication implements ActionListener {
     public void simpleUpdate(float tpf) {
         cam.lookAt(robot.getVehicle().getPhysicsLocation(), Vector3f.UNIT_Y);
         drawRayLines();
+        robot.updateMap();
     }
 
     private synchronized void drawRayLines() {

@@ -3,7 +3,7 @@ package robot;
 /**
  * Created by svyatoslav_yakovlev on 5/22/2016.
  */
-public interface Manageble {
+public interface Controllable {
 
     void start();
     void stop();

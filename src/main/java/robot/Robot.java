@@ -9,17 +9,20 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Cylinder;
+import map.BinaryMapManager;
 import sensors.Lidar;
 
 /**
  * Created by svyatoslav_yakovlev on 5/22/2016.
  */
-public class Robot implements Manageble {
+public class Robot implements Controllable {
 
     private Lidar lidar;
 
     private VehicleControl vehicle;
     private Node vehicleNode;
+
+    BinaryMapManager mapManager = new BinaryMapManager(0.5f);
 
     public Lidar getLidar() {
         return lidar;
@@ -36,6 +39,10 @@ public class Robot implements Manageble {
     public Robot(Material mat) {
         initialise(mat);
         initialiseLidar(mat);
+    }
+
+    public void updateMap(){
+        mapManager.updateMapWithLidarData(getLidar().getLastMeasure());
     }
 
 

@@ -121,7 +121,7 @@ public class Lidar extends Thread implements Sensor<CopyOnWriteArrayList<Collisi
     public void run() {
         try {
             while (isOn) {
-                makeMeasure();// TODO: 5/27/2016 thread should stops when app is stoped
+                makeMeasure();
                 Thread.currentThread().sleep((long) (1000 / mesurementFrequency));
             }
         } catch (InterruptedException e) {
