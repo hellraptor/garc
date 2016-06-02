@@ -22,7 +22,11 @@ public class Robot implements Controllable {
     private VehicleControl vehicle;
     private Node vehicleNode;
 
-    BinaryMapManager mapManager = new BinaryMapManager(0.5f);
+    BinaryMapManager mapManager = new BinaryMapManager(0.1f);
+
+    public BinaryMapManager getMapManager() {
+        return mapManager;
+    }
 
     public Lidar getLidar() {
         return lidar;

@@ -11,8 +11,12 @@ import com.jme3.math.Matrix3f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
+import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Line;
+import com.jme3.ui.Picture;
+import javafx.util.Pair;
 import jme3test.bullet.PhysicsTestHelper;
+import map.fragments.BinaryMapFragment;
 import robot.Robot;
 
 
@@ -92,6 +96,33 @@ public class GarcStarter extends SimpleApplication implements ActionListener {
         cam.lookAt(robot.getVehicle().getPhysicsLocation(), Vector3f.UNIT_Y);
         drawRayLines();
         robot.updateMap();
+        drawMap();
+    }
+
+    private void drawMap() {
+        //   guiNode.detachChildNamed("map");
+        Node map = new Node("map");
+        robot.getMapManager().getMap().getMapData().forEach((position, binaryMapFragment) -> {
+
+                    map.attachChild(createCellView(position, binaryMapFragment));
+                }
+        );
+        guiNode.attachChild(map);
+
+    }
+
+    private Spatial createCellView(Pair<Integer, Integer> position, BinaryMapFragment binaryMapFragment) {
+        Picture p = new Picture("Picture1");
+        int size = 10;
+        p.move(0, 0, -1);
+        int marging = 500;
+        p.setPosition(marging + size * position.getKey(), marging + size * position.getValue());
+        p.setWidth(size);
+        p.setHeight(size);
+        p.setImage(assetManager, "Interface/Logo/Monkey.jpg", false);
+        //guiNode.attachChild(p);
+
+        return p;
     }
 
     private synchronized void drawRayLines() {

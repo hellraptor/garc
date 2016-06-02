@@ -10,6 +10,10 @@ import java.util.Map;
 public abstract class SimpleRobotMap<E, V extends SimpleMapFragment> {
     Map<E, V> map;
 
+    public Map<E, V> getMapData() {
+        return map;
+    }
+
     public void addToMap(E position, V fragment) {
         map.put(position, fragment);
     }

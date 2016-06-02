@@ -20,7 +20,7 @@ public class TrickyBinaryMap extends SimpleRobotMap<Pair<Integer, Integer>, Bina
     }
 
     private Integer calculateCellAxisPosition(float positionByAxis) {
-        return (int) (positionByAxis / cellSize);
+        return Math.round(positionByAxis / cellSize);
     }
 
     public int getSize() {
