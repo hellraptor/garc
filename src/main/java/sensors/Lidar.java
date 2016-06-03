@@ -121,11 +121,14 @@ public class Lidar extends Thread implements Sensor<CopyOnWriteArrayList<Collisi
     public void run() {
         try {
             while (isOn) {
+
                 makeMeasure();
+                System.out.println("sssssss");
                 Thread.currentThread().sleep((long) (1000 / mesurementFrequency));
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
+            System.out.println("!Q!!!!!!!!!!!"+e.getMessage());
         }
     }
 }
