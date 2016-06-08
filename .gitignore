@@ -21,8 +21,7 @@ $RECYCLE.BIN/
 /bulletjme64.dll
 #generated files
 /target
-*OpenAL64.dll
-*lwjgl64.dll
+
 
 # Windows shortcuts
 *.lnk
