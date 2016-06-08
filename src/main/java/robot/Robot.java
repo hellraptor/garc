@@ -12,17 +12,21 @@ import com.jme3.scene.shape.Cylinder;
 import map.BinaryMapManager;
 import sensors.Lidar;
 
-/**
- * Created by svyatoslav_yakovlev on 5/22/2016.
- */
+
 public class Robot implements Controllable {
 
+    public static final int MASS = 400;
+    public static final int SCANING_RADIOUS = 175;
+    public static final int LIDAR_X_POS = 0;
+    public static final float LIDAR_Y_POS = 1.2f;
+    public static final float lIDAR_Z_POS = 2.45f;
+    public static final int AXIS_SAMPLES = 16;
     private Lidar lidar;
 
     private VehicleControl vehicle;
     private Node vehicleNode;
 
-    BinaryMapManager mapManager = new BinaryMapManager(0.1f);
+    BinaryMapManager mapManager = new BinaryMapManager(0.5f);
 
     public BinaryMapManager getMapManager() {
         return mapManager;
@@ -45,23 +49,24 @@ public class Robot implements Controllable {
         initialiseLidar(mat);
     }
 
-    public void updateMap(){
+    public void updateMap() {
         mapManager.updateMapWithLidarData(getLidar().getLastMeasure());
     }
 
 
     private void initialise(Material mat) {
+        /**
+         * the following code is setting of suspension
+         */
 
         //create a compound shape and attach the BoxCollisionShape for the car body at 0,1,0
         //this shifts the effective center of mass of the BoxCollisionShape to 0,-1,0
         CompoundCollisionShape compoundShape = new CompoundCollisionShape();
         BoxCollisionShape box = new BoxCollisionShape(new Vector3f(1.2f, 0.5f, 2.4f));
         compoundShape.addChildShape(box, new Vector3f(0, 1.1f, 0));
-
         //create vehicle node
-
         vehicleNode = new Node("vehicleNode");
-        vehicle = new VehicleControl(compoundShape, 400);
+        vehicle = new VehicleControl(compoundShape, MASS);
         vehicleNode.addControl(vehicle);
 
         //setting suspension values for wheels, this can be a bit tricky
@@ -82,23 +87,22 @@ public class Robot implements Controllable {
         float yOff = 0.5f;
         float xOff = 1f;
         float zOff = 2f;
-
         addWheals(mat, wheelDirection, wheelAxle, radius, restLength, yOff, xOff, zOff);
-
-
     }
 
     private void initialiseLidar(Material mat) {
-        lidar = new Lidar(175, mat);
-        lidar.getLidarGeometry().move(0, 1.2f, 2.45f);
+        lidar = new Lidar(SCANING_RADIOUS, mat);
+        /**
+         * setting of the lidar position
+         */
+        lidar.getLidarGeometry().move(LIDAR_X_POS, LIDAR_Y_POS, lIDAR_Z_POS);
         vehicleNode.attachChild(lidar.getLidarGeometry());
-        lidar.setOn(true);
         lidar.start();
     }
 
     private void addWheals(Material mat, Vector3f wheelDirection, Vector3f wheelAxle, float radius,
                            float restLength, float yOff, float xOff, float zOff) {
-        Cylinder wheelMesh = new Cylinder(16, 16, radius, radius * 0.6f, true);
+        Cylinder wheelMesh = new Cylinder(AXIS_SAMPLES, AXIS_SAMPLES, radius, radius * 0.6f, true);
 
         Node node2 = new Node("wheel 1 node");
         Geometry wheels2 = new Geometry("wheel 1", wheelMesh);

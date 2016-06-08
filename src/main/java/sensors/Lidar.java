@@ -17,18 +17,17 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class Lidar extends Thread implements Sensor<CopyOnWriteArrayList<CollisionResult>> {
 
-    public static final float distanceOfMesures = 15f;
+    private static final float distanceOfMesures = 15f;
+    private static final float STARTING_ANGLE = 2.5f;
+    private static final boolean debugMode = true;
     private final Material mat;
-    CopyOnWriteArrayList<CollisionResult> lastMeasure = new CopyOnWriteArrayList<>();
-
-
-    Geometry lidarGeometry;
-
-    float angleIncrement = 3f;
-
-    Node collidables;
-
-    boolean isOn;
+    private float scanningRadius = 175;
+    private float angleIncrement = 3f;
+    private float measurementFrequency = 5;
+    private boolean isOn;
+    private Node collisionCollection;
+    private CopyOnWriteArrayList<CollisionResult> lastMeasure = new CopyOnWriteArrayList<>();
+    private Geometry lidarGeometry;
 
     public boolean isOn() {
         return isOn;
@@ -38,34 +37,29 @@ public class Lidar extends Thread implements Sensor<CopyOnWriteArrayList<Collisi
         isOn = on;
     }
 
-    float mesurementFrequency = 5;
-
-    private float scaningRadious = 175;
-
-    public Node getCollidables() {
-        return collidables;
-    }
-
-    public void setCollidables(Node collidables) {
-        this.collidables = collidables;
-    }
-
-
     @Override
     public synchronized CopyOnWriteArrayList<CollisionResult> getLastMeasure() {
         return lastMeasure;
+    }
+
+    public Node getCollisionCollection() {
+        return collisionCollection;
+    }
+
+    public void setCollisionCollection(Node collisionCollection) {
+        this.collisionCollection = collisionCollection;
     }
 
     public Geometry getLidarGeometry() {
         return lidarGeometry;
     }
 
-    public float getScaningRadious() {
-        return scaningRadious;
+    public float getScanningRadius() {
+        return scanningRadius;
     }
 
-    public Lidar(float scaningRadious, Material mat) {
-        this.scaningRadious = scaningRadious;
+    public Lidar(float scanningRadius, Material mat) {
+        this.scanningRadius = scanningRadius;
         Box b = new Box(0.1f, 0.1f, 0.1f);
         lidarGeometry = new Geometry("Lidar", b);
         mat.setColor("Color", ColorRGBA.Blue);
@@ -73,35 +67,36 @@ public class Lidar extends Thread implements Sensor<CopyOnWriteArrayList<Collisi
         lidarGeometry.setMaterial(this.mat);
     }
 
-
     public CopyOnWriteArrayList<CollisionResult> makeMeasure() {
         CollisionResults results = new CollisionResults();
         Vector3f worldTranslation = lidarGeometry.getWorldTranslation();
         CopyOnWriteArrayList<CollisionResult> lastMeasure = new CopyOnWriteArrayList<>();
-        float angle = 2.5f;
-        while (angle < scaningRadious) {
-            Ray ray = new Ray(worldTranslation.add(0f, 0f, 0f),
-                    getLidarGeometry().getWorldRotation()
-                            .mult(new Vector3f(-distanceOfMesures * (float) Math.cos(Math.toRadians(angle)), 0,
-                                    distanceOfMesures * (float) Math.sin(Math.toRadians(angle)))).mult(new Vector3f(1, 0, 1)));
-            collidables.collideWith(ray, results);
+        float angle = STARTING_ANGLE;
+        while (angle < scanningRadius) {
+            Ray ray = new Ray(worldTranslation, getLidarGeometry().getWorldRotation()
+                    .mult(new Vector3f(-distanceOfMesures * (float) Math.cos(Math.toRadians(angle)), 0,
+                            distanceOfMesures * (float) Math.sin(Math.toRadians(angle)))).mult(new Vector3f(1, 0, 1)));
+            collisionCollection.collideWith(ray, results);
 
             CollisionResult result = getDetection(results);
             if (result != null) {
                 lastMeasure.add(result);
-
-               System.out.println("Ray origin: " + worldTranslation);
-                System.out.println("You shot " + result.getGeometry().getName()
-                        + " at " + result.getContactPoint() + ", "
-                        + result.getDistance() + " wu away. angle: " +angle);
-
-
+                lidarDetectionLogining(worldTranslation, angle, result);
             }
             angle += angleIncrement;
         }
 
         this.lastMeasure = lastMeasure;
         return lastMeasure;
+    }
+
+    private void lidarDetectionLogining(Vector3f worldTranslation, float angle, CollisionResult result) {
+        if (debugMode) {
+            System.out.println("Ray origin: " + worldTranslation);
+            System.out.println("You shot " + result.getGeometry().getName()
+                    + " at " + result.getContactPoint() + ", "
+                    + result.getDistance() + " wu away. angle: " + angle);
+        }
     }
 
     private CollisionResult getDetection(final CollisionResults results) {
@@ -120,15 +115,15 @@ public class Lidar extends Thread implements Sensor<CopyOnWriteArrayList<Collisi
     @Override
     public void run() {
         try {
-            while (isOn) {
-
-                makeMeasure();
-                System.out.println("sssssss");
-                Thread.currentThread().sleep((long) (1000 / mesurementFrequency));
+            while (true) {
+                if (isOn) {
+                    makeMeasure();
+                }
+                Thread.currentThread().sleep((long) (1000 / measurementFrequency));
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
-            System.out.println("!Q!!!!!!!!!!!"+e.getMessage());
+            System.out.println("!!!!!!!!!!!" + e.getMessage());
         }
     }
 }

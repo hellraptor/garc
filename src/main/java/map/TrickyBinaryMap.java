@@ -12,7 +12,7 @@ public class TrickyBinaryMap extends SimpleRobotMap<Pair<Integer, Integer>, Bina
     @Override
     public void addToMapByCoordinates(Vector3f position, BinaryMapFragment fragment) {
         addToMap(new Pair<>(calculateCellAxisPosition(position.getX()),
-                calculateCellAxisPosition(position.getY())), fragment);
+                calculateCellAxisPosition(position.getZ())), fragment);
     }
 
     public TrickyBinaryMap(float cellSize) {

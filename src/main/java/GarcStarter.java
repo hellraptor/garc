@@ -25,13 +25,17 @@ import robot.Robot;
  */
 public class GarcStarter extends SimpleApplication implements ActionListener {
 
+    public static final int JUMP_Y_FORCE = 3000;
+    public static final int SCREEN_MARGIN = 500;
+    public static final float WHEEL_ROTATION_INKREMENT = .5f;
+    public static final int SCREEN_CELL_SIZE = 10;
     private BulletAppState bulletAppState;
 
     private final float accelerationForce = 1000.0f;
     private final float brakeForce = 100.0f;
     private float steeringValue = 0;
     private float accelerationValue = 0;
-    private Vector3f jumpForce = new Vector3f(0, 3000, 0);
+    private Vector3f jumpForce = new Vector3f(0, JUMP_Y_FORCE, 0);
     private Robot robot;
     Node collidables;
 
@@ -64,12 +68,14 @@ public class GarcStarter extends SimpleApplication implements ActionListener {
         inputManager.addMapping("Downs", new KeyTrigger(KeyInput.KEY_J));
         inputManager.addMapping("Space", new KeyTrigger(KeyInput.KEY_SPACE));
         inputManager.addMapping("Reset", new KeyTrigger(KeyInput.KEY_RETURN));
+        inputManager.addMapping("StartMesure", new KeyTrigger(KeyInput.KEY_E));
         inputManager.addListener(this, "Lefts");
         inputManager.addListener(this, "Rights");
         inputManager.addListener(this, "Ups");
         inputManager.addListener(this, "Downs");
         inputManager.addListener(this, "Space");
         inputManager.addListener(this, "Reset");
+        inputManager.addListener(this, "StartMesure");
     }
 
     public void buildRobot() {
@@ -79,7 +85,7 @@ public class GarcStarter extends SimpleApplication implements ActionListener {
         robot = new Robot(mat);
         attachRobotToScene(robot);
         attachRobotPhysicBodyToPhysicWorld(robot);
-        robot.getLidar().setCollidables(collidables);// TODO: 5/26/2016 remove this setter and move addition of colidables to the robot builder
+        robot.getLidar().setCollisionCollection(collidables);// TODO: 5/26/2016 remove this setter and move addition of colidables to the robot builder
 
     }
 
@@ -102,59 +108,51 @@ public class GarcStarter extends SimpleApplication implements ActionListener {
     private void drawMap() {
         //   guiNode.detachChildNamed("map");
         Node map = new Node("map");
-        robot.getMapManager().getMap().getMapData().forEach((position, binaryMapFragment) -> {
-
-                    map.attachChild(createCellView(position, binaryMapFragment));
-                }
+        robot.getMapManager().getMap().getMapData().forEach((position, binaryMapFragment)
+                -> map.attachChild(createCellView(position, binaryMapFragment))
         );
         guiNode.attachChild(map);
-
     }
 
     private Spatial createCellView(Pair<Integer, Integer> position, BinaryMapFragment binaryMapFragment) {
-        Picture p = new Picture("Picture1");
-        int size = 10;
-        p.move(0, 0, -1);
-        int marging = 500;
-        p.setPosition(marging + size * position.getKey(), marging + size * position.getValue());
-        p.setWidth(size);
-        p.setHeight(size);
-        p.setImage(assetManager, "Interface/Logo/Monkey.jpg", false);
-        //guiNode.attachChild(p);
-
-        return p;
+        Picture pictureOfCell = new Picture("Picture1");
+        int size = SCREEN_CELL_SIZE;
+        pictureOfCell.move(0, 0, -1);
+        int marging = SCREEN_MARGIN;
+        pictureOfCell.setPosition(marging + size * position.getKey(), marging + size * position.getValue());
+        pictureOfCell.setWidth(size);
+        pictureOfCell.setHeight(size);
+        pictureOfCell.setImage(assetManager, "Interface/Logo/Monkey.jpg", false);
+        return pictureOfCell;
     }
 
     private synchronized void drawRayLines() {
         rootNode.detachChildNamed("Rays");
-
         Node rays = new Node("Rays");
         for (CollisionResult cl : robot.getLidar().getLastMeasure()) {
-            //  if (robot.getLidar().getLastMeasure().size() <= 0) return;
             Line line = new Line(robot.getLidar().getLidarGeometry().getWorldTranslation(), cl.getContactPoint());
-            Geometry gline = new Geometry("rayLine", line);
+            Geometry gLine = new Geometry("rayLine", line);
             Material mat1 = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
             mat1.setColor("Color", ColorRGBA.Green);
-            gline.setMaterial(mat1);
-            rays.attachChild(gline);
+            gLine.setMaterial(mat1);
+            rays.attachChild(gLine);
         }
         rootNode.attachChild(rays);
-
     }
 
     public void onAction(String binding, boolean value, float tpf) {
         if (binding.equals("Lefts")) {
             if (value) {
-                steeringValue += .5f;
+                steeringValue += WHEEL_ROTATION_INKREMENT;
             } else {
-                steeringValue += -.5f;
+                steeringValue += -WHEEL_ROTATION_INKREMENT;
             }
             robot.getVehicle().steer(steeringValue);
         } else if (binding.equals("Rights")) {
             if (value) {
-                steeringValue += -.5f;
+                steeringValue += -WHEEL_ROTATION_INKREMENT;
             } else {
-                steeringValue += .5f;
+                steeringValue += WHEEL_ROTATION_INKREMENT;
             }
             robot.getVehicle().steer(steeringValue);
         } else if (binding.equals("Ups")) {
@@ -182,14 +180,19 @@ public class GarcStarter extends SimpleApplication implements ActionListener {
                 robot.getVehicle().setLinearVelocity(Vector3f.ZERO);
                 robot.getVehicle().setAngularVelocity(Vector3f.ZERO);
                 robot.getVehicle().resetSuspension();
-            } else {
             }
+        } else if (binding.equals("StartMesure")) {
+            if (value) {
+                System.out.println("StartMesure");
+                robot.getLidar().setOn(!robot.getLidar().isOn());
+            }
+
         }
     }
 
     @Override
     public void stop() {
-        robot.getLidar().setOn(false);//// TODO: 5/27/2016
+        robot.getLidar().interrupt();//// TODO: 5/27/2016
         super.stop();
     }
 
