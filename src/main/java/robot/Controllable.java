@@ -6,6 +6,8 @@ package robot;
 public interface Controllable {
 
     void start();
+
     void stop();
+
     void setTarget(Target target);
 }

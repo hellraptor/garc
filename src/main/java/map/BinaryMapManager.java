@@ -14,7 +14,6 @@ public class BinaryMapManager extends MapManager<TrickyBinaryMap> {
     public void updateMapWithLidarData(CopyOnWriteArrayList<CollisionResult> pointCloud) {
         TrickyBinaryMap map = getMap();
         pointCloud.forEach(point -> map.addToMapByCoordinates(point.getContactPoint(), new BinaryMapFragment(true)));
-        System.out.println("new map size is " + map.getSize());
     }
 
     public BinaryMapManager(float cellSize) {

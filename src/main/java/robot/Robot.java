@@ -10,6 +10,7 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Cylinder;
 import map.BinaryMapManager;
+import map.fragments.BinaryMapFragment;
 import sensors.Lidar;
 
 
@@ -27,6 +28,7 @@ public class Robot implements Controllable {
     private Node vehicleNode;
 
     BinaryMapManager mapManager = new BinaryMapManager(0.5f);
+    private Target taget;
 
     public BinaryMapManager getMapManager() {
         return mapManager;
@@ -143,6 +145,8 @@ public class Robot implements Controllable {
     }
 
     public void setTarget(Target target) {
+        this.taget = target;
+        getMapManager().getMap().addToMapByCoordinates(target.getPosition(), new BinaryMapFragment(true, true));
 
     }
 }
