@@ -65,7 +65,7 @@ public class Robot implements Controllable {
 
     public void updateMap() {
         mapManager.updateMapWithLidarData(getLidar().getLastMeasure());
-        mapManager.getMap().addToMapByCoordinates(vehicleNode.getWorldTranslation(), new BinaryMapFragment(true, false));
+        mapManager.updateRobotPosition(vehicle.getPhysicsLocation());
     }
 
     public void start() {

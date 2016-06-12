@@ -20,8 +20,8 @@ import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Line;
 import com.jme3.scene.shape.Sphere;
 import com.jme3.ui.Picture;
-import javafx.util.Pair;
 import jme3test.bullet.PhysicsTestHelper;
+import map.RobotPosition;
 import map.fragments.BinaryMapFragment;
 import robot.Robot;
 import robot.Target;
@@ -79,7 +79,7 @@ public class GarcStarter extends SimpleApplication implements ActionListener {
     }
 
     private void drawMap() {
-        //   guiNode.detachChildNamed("mapViewNode");
+        guiNode.detachChildNamed("mapViewNode");
         Node mapViewNode = new Node("mapViewNode");
         robot.getMapManager().getMap().getMapData().forEach((position, binaryMapFragment)
                 -> mapViewNode.attachChild(createCellView(position, binaryMapFragment))
@@ -87,12 +87,12 @@ public class GarcStarter extends SimpleApplication implements ActionListener {
         guiNode.attachChild(mapViewNode);
     }
 
-    private Spatial createCellView(Pair<Integer, Integer> position, BinaryMapFragment binaryMapFragment) {
+    private Spatial createCellView(RobotPosition position, BinaryMapFragment binaryMapFragment) {
         Picture pictureOfCell = new Picture("Picture1");
         int size = SCREEN_CELL_SIZE;
         int marging = SCREEN_MARGIN;
         pictureOfCell.move(0, 0, -1);
-        pictureOfCell.setPosition(marging + size * position.getKey(), marging + size * position.getValue());
+        pictureOfCell.setPosition(marging + size * position.getX(), marging + size * position.getZ());
         pictureOfCell.setWidth(size);
         pictureOfCell.setHeight(size);
         pictureOfCell.setImage(assetManager, binaryMapFragment.isTarget() ? "target.png" : "cell.png", false);
