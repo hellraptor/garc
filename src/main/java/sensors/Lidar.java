@@ -2,13 +2,10 @@ package sensors;
 
 import com.jme3.collision.CollisionResult;
 import com.jme3.collision.CollisionResults;
-import com.jme3.material.Material;
-import com.jme3.math.ColorRGBA;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
-import com.jme3.scene.shape.Box;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -20,7 +17,6 @@ public class Lidar extends Thread implements Sensor<CopyOnWriteArrayList<Collisi
     private static final float distanceOfMesures = 15f;
     private static final float STARTING_ANGLE = 2.5f;
     private static final boolean debugMode = true;
-    private final Material mat;
     private float scanningRadius = 175;
     private float angleIncrement = 3f;
     private float measurementFrequency = 5;
@@ -58,13 +54,8 @@ public class Lidar extends Thread implements Sensor<CopyOnWriteArrayList<Collisi
         return scanningRadius;
     }
 
-    public Lidar(float scanningRadius, Material mat) {
+    public Lidar(float scanningRadius) {
         this.scanningRadius = scanningRadius;
-        Box b = new Box(0.1f, 0.1f, 0.1f);
-        lidarGeometry = new Geometry("Lidar", b);
-        mat.setColor("Color", ColorRGBA.Blue);
-        this.mat = mat;
-        lidarGeometry.setMaterial(this.mat);
     }
 
     public CopyOnWriteArrayList<CollisionResult> makeMeasure() {
@@ -125,5 +116,9 @@ public class Lidar extends Thread implements Sensor<CopyOnWriteArrayList<Collisi
             e.printStackTrace();
             System.out.println("!!!!!!!!!!!" + e.getMessage());
         }
+    }
+
+    public void setLidarGeometry(Geometry lidarGeometry) {
+        this.lidarGeometry = lidarGeometry;
     }
 }

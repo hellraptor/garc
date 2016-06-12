@@ -1,6 +1,6 @@
+import builders.RobotBuilder;
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
-import com.jme3.bullet.PhysicsSpace;
 import com.jme3.collision.CollisionResult;
 import com.jme3.collision.CollisionResults;
 import com.jme3.font.BitmapText;
@@ -38,6 +38,8 @@ public class GarcStarter extends SimpleApplication implements ActionListener {
     public static final float WHEEL_ROTATION_INKREMENT = .5f;
     private BulletAppState bulletAppState;
 
+    private RobotBuilder robotBuilder;
+
     private final float accelerationForce = 1000.0f;
     private final float brakeForce = 100.0f;
     private float steeringValue = 0;
@@ -45,7 +47,7 @@ public class GarcStarter extends SimpleApplication implements ActionListener {
     private Vector3f jumpForce = new Vector3f(0, JUMP_Y_FORCE, 0);
     private Robot robot;
     private Geometry mark;
-    Node collidables;
+    private Node collidables;
 
     public static void main(String[] args) {
         GarcStarter app = new GarcStarter();
@@ -60,44 +62,12 @@ public class GarcStarter extends SimpleApplication implements ActionListener {
         stateManager.attach(bulletAppState);
         bulletAppState.setDebugEnabled(true);
         collidables = new Node("Collidables");
-        PhysicsTestHelper.createPhysicsTestWorld(collidables, assetManager, bulletAppState.getPhysicsSpace());
         setupKeys();
-        buildRobot();
+        PhysicsTestHelper.createPhysicsTestWorld(collidables, assetManager, bulletAppState.getPhysicsSpace());
+        robotBuilder = new RobotBuilder(getAssetManager(), bulletAppState.getPhysicsSpace(), rootNode);
+        robot = robotBuilder.buildRobot(collidables);
         rootNode.attachChild(new Node("Rays"));
         rootNode.attachChild(collidables);
-    }
-
-    private PhysicsSpace getPhysicsSpace() {
-        return bulletAppState.getPhysicsSpace();
-    }
-
-    private void setupKeys() {
-        inputManager.addMapping("Lefts", new KeyTrigger(KeyInput.KEY_H));
-        inputManager.addMapping("Rights", new KeyTrigger(KeyInput.KEY_K));
-        inputManager.addMapping("Ups", new KeyTrigger(KeyInput.KEY_U));
-        inputManager.addMapping("Downs", new KeyTrigger(KeyInput.KEY_J));
-        inputManager.addMapping("Space", new KeyTrigger(KeyInput.KEY_SPACE));
-        inputManager.addMapping("Reset", new KeyTrigger(KeyInput.KEY_RETURN));
-        inputManager.addMapping("StartMesure", new KeyTrigger(KeyInput.KEY_E));
-        inputManager.addMapping("Shoot", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
-        inputManager.addListener(this, "Lefts");
-        inputManager.addListener(this, "Rights");
-        inputManager.addListener(this, "Ups");
-        inputManager.addListener(this, "Downs");
-        inputManager.addListener(this, "Space");
-        inputManager.addListener(this, "Reset");
-        inputManager.addListener(this, "StartMesure");
-        inputManager.addListener(this, "Shoot");
-    }
-
-    public void buildRobot() {
-        Material mat = new Material(getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
-        mat.getAdditionalRenderState().setWireframe(true);
-        mat.setColor("Color", ColorRGBA.Red);
-        robot = new Robot(mat);
-        rootNode.attachChild(robot.getVehicleNode());
-        getPhysicsSpace().add(robot.getVehicle());
-        robot.getLidar().setCollisionCollection(collidables);// TODO: 5/26/2016 remove this setter and move addition of colidables to the robot builder
     }
 
     @Override
@@ -143,22 +113,47 @@ public class GarcStarter extends SimpleApplication implements ActionListener {
         rootNode.attachChild(rays);
     }
 
+    private void setupKeys() {
+        inputManager.addMapping("Lefts", new KeyTrigger(KeyInput.KEY_H));
+        inputManager.addMapping("Rights", new KeyTrigger(KeyInput.KEY_K));
+        inputManager.addMapping("Ups", new KeyTrigger(KeyInput.KEY_U));
+        inputManager.addMapping("Downs", new KeyTrigger(KeyInput.KEY_J));
+        inputManager.addMapping("Space", new KeyTrigger(KeyInput.KEY_SPACE));
+        inputManager.addMapping("Reset", new KeyTrigger(KeyInput.KEY_RETURN));
+        inputManager.addMapping("StartMesure", new KeyTrigger(KeyInput.KEY_E));
+        inputManager.addMapping("Shoot", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
+        inputManager.addMapping("Stop", new KeyTrigger(KeyInput.KEY_Y));
+        inputManager.addListener(this, "Lefts");
+        inputManager.addListener(this, "Rights");
+        inputManager.addListener(this, "Ups");
+        inputManager.addListener(this, "Downs");
+        inputManager.addListener(this, "Space");
+        inputManager.addListener(this, "Reset");
+        inputManager.addListener(this, "StartMesure");
+        inputManager.addListener(this, "Shoot");
+        inputManager.addListener(this, "Stop");
+    }
+
     public void onAction(String binding, boolean value, float tpf) {
         if (binding.equals("Lefts")) {
             if (value) {
-                steeringValue += WHEEL_ROTATION_INKREMENT;
+                accelerationValue += accelerationForce;
             } else {
-                steeringValue += -WHEEL_ROTATION_INKREMENT;
+                accelerationValue -= accelerationForce;
             }
-            robot.getVehicle().steer(steeringValue);
-        } else if (binding.equals("Rights")) {
+            robot.getVehicle().accelerate(1, accelerationValue * 2);
+            robot.getVehicle().accelerate(2, -accelerationValue * 2);
+        }
+        if (binding.equals("Rights")) {
             if (value) {
-                steeringValue += -WHEEL_ROTATION_INKREMENT;
+                accelerationValue += accelerationForce;
             } else {
-                steeringValue += WHEEL_ROTATION_INKREMENT;
+                accelerationValue -= accelerationForce;
             }
-            robot.getVehicle().steer(steeringValue);
-        } else if (binding.equals("Ups")) {
+            robot.getVehicle().accelerate(2, accelerationValue * 2);
+            robot.getVehicle().accelerate(1, -accelerationValue * 2);
+        }
+        if (binding.equals("Ups")) {
             if (value) {
                 accelerationValue += accelerationForce;
             } else {
@@ -166,6 +161,13 @@ public class GarcStarter extends SimpleApplication implements ActionListener {
             }
             robot.getVehicle().accelerate(accelerationValue);
         } else if (binding.equals("Downs")) {
+            if (value) {
+                accelerationValue += accelerationForce;
+            } else {
+                accelerationValue -= accelerationForce;
+            }
+            robot.getVehicle().accelerate(-accelerationValue);
+        } else if (binding.equals("Stop")) {
             if (value) {
                 robot.getVehicle().brake(brakeForce);
             } else {
@@ -223,9 +225,7 @@ public class GarcStarter extends SimpleApplication implements ActionListener {
         }
     }
 
-    /**
-     * A red ball that marks the last spot that was "hit" by the "shot".
-     */
+
     protected void initMark() {
         Sphere sphere = new Sphere(30, 30, 0.2f);
         mark = new Geometry("BOOM!", sphere);
@@ -241,7 +241,7 @@ public class GarcStarter extends SimpleApplication implements ActionListener {
     }
 
     /**
-     * A centred plus sign to help the player aim.
+     * A centred plus sign to help the operator aim.
      */
     protected void initCrossHairs() {
         setDisplayStatView(false);
