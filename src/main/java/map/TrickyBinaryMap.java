@@ -6,12 +6,12 @@ import map.fragments.BinaryMapFragment;
 import java.util.concurrent.ConcurrentHashMap;
 
 
-public class TrickyBinaryMap extends SimpleRobotMap<RobotPosition, BinaryMapFragment,
-        ConcurrentHashMap<RobotPosition, BinaryMapFragment>> {
+public class TrickyBinaryMap extends SimpleRobotMap<MapPosition, BinaryMapFragment,
+        ConcurrentHashMap<MapPosition, BinaryMapFragment>> {
 
     private float cellSize;
 
-    public TrickyBinaryMap() {
+    private TrickyBinaryMap() {
         map = new ConcurrentHashMap<>();
     }
 
@@ -21,7 +21,7 @@ public class TrickyBinaryMap extends SimpleRobotMap<RobotPosition, BinaryMapFrag
 
     @Override
     public void addToMapByCoordinates(Vector3f position, BinaryMapFragment fragment) {
-        addToMap(new RobotPosition(calculateCellAxisPosition(position.getX()),
+        addToMap(new MapPosition(calculateCellAxisPosition(position.getX()),
                 calculateCellAxisPosition(position.getZ())), fragment);
     }
 
@@ -39,4 +39,9 @@ public class TrickyBinaryMap extends SimpleRobotMap<RobotPosition, BinaryMapFrag
     }
 
 
+    public void addToMapFakeVertices(MapPosition mapPosition, BinaryMapFragment binaryMapFragment) {
+        if (map.get(mapPosition) == null) {
+            addToMap(mapPosition, binaryMapFragment);
+        }
+    }
 }

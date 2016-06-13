@@ -20,8 +20,9 @@ import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Line;
 import com.jme3.scene.shape.Sphere;
 import com.jme3.ui.Picture;
+import control.ControlPanel;
 import jme3test.bullet.PhysicsTestHelper;
-import map.RobotPosition;
+import map.MapPosition;
 import map.fragments.BinaryMapFragment;
 import robot.Robot;
 import robot.Target;
@@ -49,6 +50,8 @@ public class GarcStarter extends SimpleApplication implements ActionListener {
     private Geometry mark;
     private Node collidables;
 
+    private ControlPanel controlPanel = new ControlPanel();
+
     public static void main(String[] args) {
         GarcStarter app = new GarcStarter();
         app.start();
@@ -68,6 +71,7 @@ public class GarcStarter extends SimpleApplication implements ActionListener {
         robot = robotBuilder.buildRobot(collidables);
         rootNode.attachChild(new Node("Rays"));
         rootNode.attachChild(collidables);
+      //  controlPanel.show(); // TODO: 6/13/2016 create control panel which will control robot and set settings
     }
 
     @Override
@@ -76,6 +80,7 @@ public class GarcStarter extends SimpleApplication implements ActionListener {
         drawRayLines();
         robot.updateMap();
         drawMap();
+       // controlPanel.button1.setText(Float.toString(robot.getVehicleNode().getWorldTranslation().getX()));
     }
 
     private void drawMap() {
@@ -87,7 +92,7 @@ public class GarcStarter extends SimpleApplication implements ActionListener {
         guiNode.attachChild(mapViewNode);
     }
 
-    private Spatial createCellView(RobotPosition position, BinaryMapFragment binaryMapFragment) {
+    private Spatial createCellView(MapPosition position, BinaryMapFragment binaryMapFragment) {
         Picture pictureOfCell = new Picture("Picture1");
         int size = SCREEN_CELL_SIZE;
         int marging = SCREEN_MARGIN;
@@ -237,6 +242,7 @@ public class GarcStarter extends SimpleApplication implements ActionListener {
     @Override
     public void stop() {
         robot.getLidar().interrupt();//// TODO: 5/27/2016
+        controlPanel.close();
         super.stop();
     }
 

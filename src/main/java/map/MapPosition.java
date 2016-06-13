@@ -3,12 +3,12 @@ package map;
 /**
  * Created by Svyatoslav_Yakovlev on 6/12/2016.
  */
-public class RobotPosition {
+public class MapPosition {
 
     private int x;
     private int z;
 
-    public RobotPosition(int x, int z) {
+    public MapPosition(int x, int z) {
         this.x = x;
         this.z = z;
     }
@@ -34,7 +34,7 @@ public class RobotPosition {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        RobotPosition that = (RobotPosition) o;
+        MapPosition that = (MapPosition) o;
 
         if (x != that.x) return false;
         return z == that.z;

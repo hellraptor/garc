@@ -27,7 +27,7 @@ public class BinaryMapManager extends MapManager<TrickyBinaryMap> {
         if (robotPosition != null) {
             Integer x = getMap().calculateCellAxisPosition(robotPosition.getX());
             Integer z = getMap().calculateCellAxisPosition(robotPosition.getZ());
-            getMap().getMapData().remove(new RobotPosition(x, z));
+            getMap().getMapData().remove(new MapPosition(x, z));
         }
         robotPosition = physicsLocation;
         getMap().addToMapByCoordinates(physicsLocation, new BinaryMapFragment(true));

@@ -6,8 +6,9 @@ import map.fragments.SimpleMapFragment;
 import java.util.Map;
 
 
-public abstract class SimpleRobotMap<E, V extends SimpleMapFragment, S extends Map<E,V> > {
-    S map;
+public abstract class SimpleRobotMap<E, V extends SimpleMapFragment, S extends Map<E, V>> {
+
+    protected S map;
 
     public S getMapData() {
         return map;
