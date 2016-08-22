@@ -233,7 +233,7 @@ public class GarcStarter extends SimpleApplication implements ActionListener {
 
     protected void initMark() {
         Sphere sphere = new Sphere(30, 30, 0.2f);
-        mark = new Geometry("BOOM!", sphere);
+        mark = new Geometry("Goal", sphere);
         Material mark_mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         mark_mat.setColor("Color", ColorRGBA.Red);
         mark.setMaterial(mark_mat);
