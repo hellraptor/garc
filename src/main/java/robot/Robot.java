@@ -21,6 +21,10 @@ public class Robot implements Controllable {
 
     private Node vehicleNode;
 
+    private Target taget;
+
+    private BinaryMapManager mapManager = new BinaryMapManager(0.5f);
+
     public void setVehicleNode(Node vehicleNode) {
         this.vehicleNode = vehicleNode;
     }
@@ -55,10 +59,6 @@ public class Robot implements Controllable {
         this.lidar = lidar;
         vehicleNode.attachChild(lidar.getLidarGeometry());
     }
-
-    BinaryMapManager mapManager = new BinaryMapManager(0.5f);
-
-    private Target taget;
 
     public Robot() {
     }

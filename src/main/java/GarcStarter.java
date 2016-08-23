@@ -71,7 +71,7 @@ public class GarcStarter extends SimpleApplication implements ActionListener {
         robot = robotBuilder.buildRobot(collidables);
         rootNode.attachChild(new Node("Rays"));
         rootNode.attachChild(collidables);
-      //  controlPanel.show(); // TODO: 6/13/2016 create control panel which will control robot and set settings
+        controlPanel.show(); // TODO: 6/13/2016 create control panel which will control robot and set settings
     }
 
     @Override
@@ -80,7 +80,15 @@ public class GarcStarter extends SimpleApplication implements ActionListener {
         drawRayLines();
         robot.updateMap();
         drawMap();
-       // controlPanel.button1.setText(Float.toString(robot.getVehicleNode().getWorldTranslation().getX()));
+        updateControlPanel();
+
+    }
+
+    private void updateControlPanel() {
+        controlPanel.updateWheelInfo(
+                robot.getVehicle().getWheel(0).getWheelInfo().rotation,
+                robot.getVehicle().getWheel(1).getWheelInfo().rotation,
+                robot.getVehicle().getWheel(2).getWheelInfo().rotation);
     }
 
     private void drawMap() {
@@ -156,6 +164,7 @@ public class GarcStarter extends SimpleApplication implements ActionListener {
                 accelerationValue -= accelerationForce;
             }
             robot.getVehicle().accelerate(2, accelerationValue * 2);
+            System.out.println(robot.getVehicle().getWheel(0).getWheelInfo().rotation);
             robot.getVehicle().accelerate(1, -accelerationValue * 2);
         }
         if (binding.equals("Ups")) {
