@@ -7,14 +7,19 @@
     <groupId>ru.rtc</groupId>
     <artifactId>garc</artifactId>
     <version>0.00001-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>${name}</name>
     <properties>
         <jme3.version>3.0.10</jme3.version>
         <slf4j.version>1.7.7</slf4j.version>
         <name>garc</name>
         <maven-checkstyle-plugin.version>2.17</maven-checkstyle-plugin.version>
         <webapp.resources>${basedir}/src/main/resources</webapp.resources>
-
     </properties>
+    <modules>
+        <module>robot</module>
+        <module>visual</module>
+    </modules>
 
 
     <build>
@@ -67,35 +72,11 @@
         </plugins>
     </build>
     <dependencies>
-
-
         <!-- Logging dependencies -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>${slf4j.version}</version>
         </dependency>
-        <dependency>
-            <groupId>commons-collections</groupId>
-            <artifactId>commons-collections</artifactId>
-            <version>3.2.2</version>
-        </dependency>
-
-
-        <dependency>
-            <groupId>org.jmonkeyengine</groupId>
-            <artifactId>jme3-bullet-native</artifactId>
-            <version>3.1.0-beta1</version>
-        </dependency>
-
     </dependencies>
-    <repositories>
-        <repository>
-            <id>jme3-repo</id>
-            <name>JME3 maven repo</name>
-            <url>http://updates.jmonkeyengine.org/maven/</url>
-        </repository>
-    </repositories>
-
-
 </project>
