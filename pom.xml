@@ -19,6 +19,8 @@
     <modules>
         <module>robot</module>
         <module>visual</module>
+        <module>visual</module>
+        <module>robot</module>
     </modules>
 
 
